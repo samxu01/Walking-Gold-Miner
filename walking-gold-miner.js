@@ -1,7 +1,7 @@
 import {defs, tiny} from './examples/common.js';
 
 const {
-    Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Material, Scene,
+    Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Texture, Material, Scene,
 } = tiny;
 
 export class WalkingGoldMiner extends Scene {
@@ -101,7 +101,7 @@ export class WalkingGoldMiner extends Scene {
         //draw back wall
         let wall_tr= Mat4.identity();
         wall_tr=wall_tr.times(Mat4.translation(0,-4,-2)).times(Mat4.scale(20, 8, 0.1))
-        this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall)
+        this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall.override({texture: new Texture("assets/soil-textures.png")}))
 
         //draw left wall
         let lwall_tr= Mat4.identity();
