@@ -1,4 +1,6 @@
 import {defs, tiny} from './examples/common.js';
+import { Shape_From_File } from './examples/obj-file-demo.js';
+
 
 const {
     Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Texture, Material, Scene,
@@ -24,6 +26,7 @@ export class WalkingGoldMiner extends Scene {
             planet_4: new defs.Subdivision_Sphere(4),
             moon: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1),
             backwall: new defs.Cube,
+            miner: new Shape_From_File("assets/miner.obj"),
         };
 
         // *** Materials
@@ -54,7 +57,9 @@ export class WalkingGoldMiner extends Scene {
             Wall: new Material(new defs.Textured_Phong(1),
                 {ambient: 0.8, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil-textures.png")}),
             ground: new Material(new defs.Phong_Shader(),
-                {ambient: 0.8, diffusivity: 1, specular: 0.5, color: hex_color("#252323")})
+                {ambient: 0.8, diffusivity: 1, specular: 0.5, color: hex_color("#252323")}),
+            miner: new Material(new defs.Textured_Phong(1),
+                {ambient: 1, texture: new Texture("assets/steve.png","Nearest")}),
 
         }
 
@@ -125,6 +130,10 @@ export class WalkingGoldMiner extends Scene {
         let bwall_tr= Mat4.identity();
         bwall_tr= bwall_tr.times(Mat4.translation(0,-12,0)).times(Mat4.scale(20, 0.1, 2))
         this.shapes.backwall.draw(context, program_state, bwall_tr, this.materials.Wall)
+
+        //place miner
+        let miner_tr=Mat4.identity();
+        this.shapes.miner.draw(context, program_state, miner_tr, this.materials.miner)
 
 
         if (this.attached) {
