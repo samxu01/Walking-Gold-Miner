@@ -51,8 +51,11 @@ export class WalkingGoldMiner extends Scene {
                 {ambient: 0, diffusivity: 1, specular: 1, color: hex_color("#C7E4EE")}),
             moon: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: 1, specular: 1, color: hex_color("#FA8072")}),
-            Wall: new Material(new defs.Phong_Shader(),
-                {ambient: 1, diffusivity: 1, specularity: 1, color: hex_color("#343333")})
+            Wall: new Material(new defs.Textured_Phong(1),
+                {ambient: 0.8, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil-textures.png")}),
+            ground: new Material(new defs.Phong_Shader(),
+                {ambient: 0.8, diffusivity: 1, specular: 0.5, color: hex_color("#252323")})
+
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 2, 20), vec3(0, 0, 0), vec3(0, 4, 0));
@@ -97,11 +100,11 @@ export class WalkingGoldMiner extends Scene {
         sun_transform = sun_transform.times(Mat4.scale(sun_scale, sun_scale, sun_scale));
         program_state.lights = [new Light(vec4(0, 0, 0, 1), color(1, whiteness, whiteness, 1), 10 ** sun_scale)];
         this.shapes.sun.draw(context, program_state, sun_transform, sun_material);*/
-        program_state.lights = [new Light(vec4(0, 0, 1, 1), color(1, 1, 1, 1), 10)]
+        program_state.lights = [new Light(vec4(0, 0, 100, 1), color(1, 1, 1, 1), 1000)]
         //draw back wall
         let wall_tr= Mat4.identity();
         wall_tr=wall_tr.times(Mat4.translation(0,-4,-2)).times(Mat4.scale(20, 8, 0.1))
-        this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall.override({texture: new Texture("assets/soil-textures.png")}))
+        this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall)
 
         //draw left wall
         let lwall_tr= Mat4.identity();
@@ -116,7 +119,7 @@ export class WalkingGoldMiner extends Scene {
         //draw upper wall
         let uwall_tr= Mat4.identity();
         uwall_tr= uwall_tr.times(Mat4.translation(0,4,0)).times(Mat4.scale(20, 0.1, 2))
-        this.shapes.backwall.draw(context, program_state, uwall_tr, this.materials.Wall)
+        this.shapes.backwall.draw(context, program_state, uwall_tr, this.materials.ground)
 
         //draw bottom wall
         let bwall_tr= Mat4.identity();
