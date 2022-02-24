@@ -37,8 +37,10 @@ export class WalkingGoldMiner extends Scene {
             //        (Requirement 4)
             sun: new Material(new defs.Phong_Shader(),
                 {ambient: 1, color: color(1, 0, 0, 1)}),
-            planet_1: new Material(new defs.Phong_Shader(),
+            gold: new Material(new defs.Phong_Shader(),
                 {ambient: 1, color: hex_color("#FFD700")}),
+            stone: new Material(new defs.Phong_Shader(),
+                {ambient: 0, color: hex_color("#a8a3a3")}),
             planet_2: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: .2, specular: 1, color: hex_color("#80FFFF")}),
             planet_2_g: new Material(new Gouraud_Shader(),
@@ -52,9 +54,9 @@ export class WalkingGoldMiner extends Scene {
             moon: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: 1, specular: 1, color: hex_color("#FA8072")}),
             Wall: new Material(new defs.Textured_Phong(1),
-                {ambient: 0.8, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil-textures.png")}),
+                {ambient: 0.5, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil-textures.png")}),
             ground: new Material(new defs.Phong_Shader(),
-                {ambient: 0.8, diffusivity: 1, specular: 0.5, color: hex_color("#252323")})
+                {ambient: 0.5, diffusivity: 1, specular: 0.5, color: hex_color("#252323")})
 
         }
 
@@ -103,12 +105,16 @@ export class WalkingGoldMiner extends Scene {
 
         //draw gold
         let gold_tr= Mat4.identity();
-        gold_tr= gold_tr.times(Mat4.translation(0,0,0.5))
+        gold_tr= gold_tr.times(Mat4.translation(0,0,-1))
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
         const omega = (1/10) * Math.PI;
         const whiteness = (1/2) * Math.cos(omega * t) + 1/2;
-        program_state.lights = [new Light(vec4(0, 0, 0.5, 1), color(whiteness, whiteness, whiteness, 1), 10*whiteness)];
-        this.shapes.planet_1.draw(context, program_state, gold_tr, this.materials.planet_1)
+        program_state.lights = [new Light(vec4(0, -10*t, 0, 1), color(whiteness, whiteness, whiteness, 1), 100**whiteness)];
+        this.shapes.planet_1.draw(context, program_state, gold_tr, this.materials.gold)
+
+        let stone_tr = Mat4.identity();
+        stone_tr = stone_tr.times(Mat4.translation(4,-3,-1))
+        this.shapes.planet_1.draw(context, program_state, stone_tr, this.materials.stone)
 
         //draw back wall
         let wall_tr= Mat4.identity();
