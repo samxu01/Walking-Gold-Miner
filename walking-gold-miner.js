@@ -86,7 +86,7 @@ export class WalkingGoldMiner extends Scene {
         // TODO: Create Planets (Requirement 1)
         // this.shapes.[XXX].draw([XXX]) // <--example
 
-        // draw the sun
+        /*// draw the sun
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
         const omega = (1/10) * Math.PI;
         const whiteness = (1/2) * Math.cos(omega * t) + 1/2;
@@ -96,8 +96,8 @@ export class WalkingGoldMiner extends Scene {
         const sun_scale = Math.cos(omega * t) + 2;
         sun_transform = sun_transform.times(Mat4.scale(sun_scale, sun_scale, sun_scale));
         program_state.lights = [new Light(vec4(0, 0, 0, 1), color(1, whiteness, whiteness, 1), 10 ** sun_scale)];
-        this.shapes.sun.draw(context, program_state, sun_transform, sun_material);
-
+        this.shapes.sun.draw(context, program_state, sun_transform, sun_material);*/
+        program_state.lights = [new Light(vec4(0, 0, 1, 1), color(1, 1, 1, 1), 10)]
         //draw back wall
         let wall_tr= Mat4.identity();
         wall_tr=wall_tr.times(Mat4.translation(0,-4,-2)).times(Mat4.scale(20, 8, 0.1))
@@ -123,60 +123,6 @@ export class WalkingGoldMiner extends Scene {
         bwall_tr= bwall_tr.times(Mat4.translation(0,-12,0)).times(Mat4.scale(20, 0.1, 2))
         this.shapes.backwall.draw(context, program_state, bwall_tr, this.materials.Wall)
 
-        // draw planet 1
-        let v = 1;
-        const v_diff = .1;
-        let planet1_transform = Mat4.identity();
-        planet1_transform = planet1_transform
-            .times(Mat4.rotation(t * v, 0 ,1 , 0))
-            .times(Mat4.translation(5, 0, 0));
-        this.shapes.planet_1.draw(context, program_state, planet1_transform, this.materials.planet_1);
-        this.planet_1 = planet1_transform;
-        v -= v_diff;
-
-        // draw planet 2
-        let planet2_transform = Mat4.identity();
-        planet2_transform = planet2_transform
-            .times(Mat4.rotation(t * v, 0 ,1 , 0))
-            .times(Mat4.translation(8, 0, 0));
-        if (Math.floor(t) % 2 == 1)
-            this.shapes.planet_2.draw(context, program_state, planet2_transform, this.materials.planet_2_g);
-        else
-            this.shapes.planet_2.draw(context, program_state, planet2_transform, this.materials.planet_2);
-        this.planet_2 = planet2_transform;
-        v -= v_diff;
-
-        // draw planet 3
-        let planet3_transform = Mat4.identity();
-        planet3_transform = planet3_transform
-            .times(Mat4.rotation(t * v, 0 ,1 , 0))
-            .times(Mat4.translation(11, 0, 0))
-        this.planet_3 = planet3_transform;
-        planet3_transform = planet3_transform
-            .times(Mat4.rotation(Math.cos(t),0 ,1 , 0))
-            .times(Mat4.rotation(Math.cos(t),1 ,0 , 0));
-        let ring_transform = planet3_transform
-            .times(Mat4.scale(3.5, 3.5, 0.1));
-        this.shapes.planet_3.draw(context, program_state, planet3_transform, this.materials.planet_3);
-        this.shapes.torus2.draw(context, program_state, ring_transform, this.materials.planet_3_ring);
-        v -= v_diff;
-
-        // draw planet 4
-        let planet4_transform = Mat4.identity();
-        planet4_transform = planet4_transform
-            .times(Mat4.rotation(t * v, 0 ,1 , 0))
-            .times(Mat4.translation(14, 0, 0));
-        let moon_transform = planet4_transform
-            .times(Mat4.rotation(t, 0, 1, 0))
-            .times(Mat4.translation(2, 0, 0));
-        this.shapes.planet_4.draw(context, program_state, planet4_transform, this.materials.planet_4);
-        this.shapes.moon.draw(context, program_state, moon_transform, this.materials.moon);
-        this.planet_4 = planet4_transform;
-        this.moon = moon_transform;
-
-        // TODO: Lighting (Requirement 2)
-        const light_position = vec4(0, 0, 0, 1);
-        program_state.lights = [new Light(light_position, color(1, whiteness, whiteness, 1), 10 ** sun_scale)];
 
         if (this.attached) {
             if (this.attached() == null)
