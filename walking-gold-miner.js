@@ -102,6 +102,10 @@ export class WalkingGoldMiner extends Scene {
         let wall_tr= Mat4.identity();
         wall_tr=wall_tr.times(Mat4.translation(0,-2,-5)).times(Mat4.scale(20, 10, 0.1))
         this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall)
+        //draw right wall
+        let ewall_tr= Mat4.identity();
+        ewall_tr=wall_tr.times(Mat4.translation(0,-2,-5)).times(Mat4.scale(20, 10, 0.1))
+        this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall)
         // draw planet 1
         let v = 1;
         const v_diff = .1;
