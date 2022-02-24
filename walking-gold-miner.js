@@ -52,7 +52,7 @@ export class WalkingGoldMiner extends Scene {
             moon: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: 1, specular: 1, color: hex_color("#FA8072")}),
             Wall: new Material(new defs.Phong_Shader(),
-                {ambient: 1, diffusivity: 1, specularity: 1, color: hex_color("#80FFFF")})
+                {ambient: 1, diffusivity: 1, specularity: 1, color: hex_color("#343333")})
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -100,12 +100,29 @@ export class WalkingGoldMiner extends Scene {
 
         //draw back wall
         let wall_tr= Mat4.identity();
-        wall_tr=wall_tr.times(Mat4.translation(0,-2,-5)).times(Mat4.scale(20, 10, 0.1))
+        wall_tr=wall_tr.times(Mat4.translation(0,-4,-2)).times(Mat4.scale(20, 8, 0.1))
         this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall)
+
+        //draw left wall
+        let lwall_tr= Mat4.identity();
+        lwall_tr= lwall_tr.times(Mat4.translation(-20,-4,0)).times(Mat4.scale(0.1, 8, 2))
+        this.shapes.backwall.draw(context, program_state, lwall_tr, this.materials.Wall)
+
         //draw right wall
-        let ewall_tr= Mat4.identity();
-        ewall_tr=wall_tr.times(Mat4.translation(0,-2,-5)).times(Mat4.scale(20, 10, 0.1))
-        this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall)
+        let rwall_tr= Mat4.identity();
+        rwall_tr= rwall_tr.times(Mat4.translation(20,-4,0)).times(Mat4.scale(0.1, 8, 2))
+        this.shapes.backwall.draw(context, program_state, rwall_tr, this.materials.Wall)
+
+        //draw upper wall
+        let uwall_tr= Mat4.identity();
+        uwall_tr= uwall_tr.times(Mat4.translation(0,4,0)).times(Mat4.scale(20, 0.1, 2))
+        this.shapes.backwall.draw(context, program_state, uwall_tr, this.materials.Wall)
+
+        //draw bottom wall
+        let bwall_tr= Mat4.identity();
+        bwall_tr= bwall_tr.times(Mat4.translation(0,-12,0)).times(Mat4.scale(20, 0.1, 2))
+        this.shapes.backwall.draw(context, program_state, bwall_tr, this.materials.Wall)
+
         // draw planet 1
         let v = 1;
         const v_diff = .1;
