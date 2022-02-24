@@ -55,7 +55,7 @@ export class WalkingGoldMiner extends Scene {
                 {ambient: 1, diffusivity: 1, specularity: 1, color: hex_color("#343333")})
         }
 
-        this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        this.initial_camera_location = Mat4.look_at(vec3(0, 2, 20), vec3(0, 0, 0), vec3(0, 4, 0));
     }
 
     make_control_panel() {
