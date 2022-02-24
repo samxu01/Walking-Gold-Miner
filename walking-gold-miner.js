@@ -23,6 +23,7 @@ export class WalkingGoldMiner extends Scene {
             planet_3: new defs.Subdivision_Sphere(4),
             planet_4: new defs.Subdivision_Sphere(4),
             moon: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1),
+            backwall: new defs.Cube,
         };
 
         // *** Materials
@@ -50,6 +51,8 @@ export class WalkingGoldMiner extends Scene {
                 {ambient: 0, diffusivity: 1, specular: 1, color: hex_color("#C7E4EE")}),
             moon: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: 1, specular: 1, color: hex_color("#FA8072")}),
+            Wall: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 1, specularity: 1, color: hex_color("#80FFFF")})
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -95,6 +98,10 @@ export class WalkingGoldMiner extends Scene {
         program_state.lights = [new Light(vec4(0, 0, 0, 1), color(1, whiteness, whiteness, 1), 10 ** sun_scale)];
         this.shapes.sun.draw(context, program_state, sun_transform, sun_material);
 
+        //draw back wall
+        let wall_tr= Mat4.identity();
+        wall_tr=wall_tr.times(Mat4.translation(0,-2,-5)).times(Mat4.scale(20, 10, 0.1))
+        this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall)
         // draw planet 1
         let v = 1;
         const v_diff = .1;
