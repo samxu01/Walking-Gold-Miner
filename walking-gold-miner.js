@@ -18,6 +18,9 @@ export class WalkingGoldMiner extends Scene {
         this.x_list=[4, 0];
         this.y_list=[-3, 0];
         this.collide=false;
+        this.collide_x=-999;
+        this.collide_y=-999;
+        this.hookTr = null;
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
             torus: new defs.Torus(15, 15),
@@ -105,6 +108,8 @@ export class WalkingGoldMiner extends Scene {
         for (let i = 0; i < x_list.length; i++){
             if (Math.abs(x-x_list[i]) <= 1 && Math.abs(y-y_list[i]) <= 1){
                 this.collide = true;
+                this.collide_x = x_list[i];
+                this.collide_y = y_list[i];
             }
         }
     }
@@ -170,6 +175,11 @@ export class WalkingGoldMiner extends Scene {
 
         let stone_tr = Mat4.identity();
         stone_tr = stone_tr.times(Mat4.translation(4,-3,-1))
+        if (this.collide_x === 4 && this.collide_y === -3)
+        {
+            stone_tr = this.hookTr;
+            stone_tr = stone_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+        }
         this.shapes.planet_1.draw(context, program_state, stone_tr, this.materials.stone)
         //draw gold
         let gold_tr= Mat4.identity();
@@ -239,7 +249,8 @@ export class WalkingGoldMiner extends Scene {
             }else{
                 hook_tr = hook_tr
                     .times(Mat4.translation(0,this.hookPullYPos,0))
-                    .times(Mat4.translation(0,(t-this.pullTime)*50 /*pull speed*/,0));
+                    .times(Mat4.translation(0,(t-this.pullTime)*20 /*pull speed*/,0));
+                this.hookTr = hook_tr;
                 if(t-this.pullTime>0.8)//Time upperbound needs to be changed according to pull speed
                                     //Otherwise the hook will not be at the original position
                 {
@@ -247,6 +258,8 @@ export class WalkingGoldMiner extends Scene {
                     this.isHookDropped = false;
                     this.hookDropPos_x=-999;
                     this.hookDropPos_y=-999;
+                    this.collide_x = -999;
+                    this.collide_y = -999;
                 }
             }
         }
