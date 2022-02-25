@@ -15,6 +15,11 @@ export class WalkingGoldMiner extends Scene {
         this.position=0;
         this.light=false;
         this.time=0;
+        this.x_list=[4, 0];
+        this.y_list=[-3, 0];
+        this.hook_x=0;
+        this.hook_y=0;
+        this.collide=false;
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
             torus: new defs.Torus(15, 15),
@@ -91,6 +96,14 @@ export class WalkingGoldMiner extends Scene {
         this.key_triggered_button("Drop Hook", ["x"], () => {
             this.isHookDropped=true;
         });
+    }
+
+    detect_collision(x_list, y_list, x, y){
+        for (let i = 0; i < x_list.length; i++){
+            if (Math.abs(x-x_list[i]) <= 1 && Math.abs(y-y_list[i]) <= 1){
+                this.collide = true;
+            }
+        }
     }
 
 
@@ -213,6 +226,7 @@ export class WalkingGoldMiner extends Scene {
                     .times(Mat4.translation(0, -(t - this.dropTime) * 20, 0));
                 this.hookPullYPos=-(t - this.dropTime) * 20;
                 this.pullTime=t;
+                this.detect_collision(this.x_list,this.y_list,this.hook_x,this.hook_y);
             }else{
                 hook_tr = hook_tr
                     .times(Mat4.translation(0,this.hookPullYPos,0))
