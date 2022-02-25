@@ -15,8 +15,8 @@ export class WalkingGoldMiner extends Scene {
         this.position=0;
         this.light=false;
         this.time=0;
-        this.x_list=[4, 0];
-        this.y_list=[-3, 0];
+        this.x_list=[4, 0, 12];
+        this.y_list=[-3, 0, -3];
         this.collide=false;
         this.collide_x=-99;
         this.collide_y=-99;
@@ -181,7 +181,7 @@ export class WalkingGoldMiner extends Scene {
         }
 
         this.shapes.planet_2.draw(context, program_state, chrac_tr, this.materials.planet_2)
-        
+
         let stone_tr = Mat4.identity();
         stone_tr = stone_tr.times(Mat4.translation(this.x_list[0],this.y_list[0],-1))
         if (this.collide_x === 4 && this.collide_y === -3)
@@ -199,6 +199,15 @@ export class WalkingGoldMiner extends Scene {
             gold_tr = gold_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
         }
         this.shapes.planet_1.draw(context, program_state, gold_tr, this.materials.gold)
+
+        let gold2_tr= Mat4.identity();
+        gold2_tr= gold2_tr.times(Mat4.translation(this.x_list[2],this.y_list[2],-1))
+        if (this.collide_x === 12 && this.collide_y === -3)
+        {
+            gold2_tr = this.hookTr;
+            gold2_tr = gold2_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+        }
+        this.shapes.planet_1.draw(context, program_state, gold2_tr, this.materials.gold)
 
         //draw back wall
         let wall_tr= Mat4.identity();
