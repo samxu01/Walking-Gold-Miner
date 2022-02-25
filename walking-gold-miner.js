@@ -69,12 +69,17 @@ export class WalkingGoldMiner extends Scene {
                 {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#ffffff")}),
         }
 
+        //use for hook transformation
         this.initial_camera_location = Mat4.look_at(vec3(0, 4, 20), vec3(0, 0, 0), vec3(0, 4, 0));
         this.isHookDropped=false;
         this.hookAngle=0;
         this.dropTime=0;
         this.hookPullYPos=0;
         this.pullTime=0;
+
+        //use to check collision
+        this.hookDropPos_x=-999
+        this.hookDropPos_y=-999;
     }
 
     make_control_panel() {
@@ -185,13 +190,10 @@ export class WalkingGoldMiner extends Scene {
         bwall_tr= bwall_tr.times(Mat4.translation(0,-12,0)).times(Mat4.scale(20, 0.1, 2))
         this.shapes.backwall.draw(context, program_state, bwall_tr, this.materials.Wall)
 
-        /*//place miner
-        let miner_tr=Mat4.identity();
-        this.shapes.miner.draw(context, program_state, miner_tr, this.materials.miner)*/
 
         //hook
         let hook_tr=Mat4.identity();
-        hook_tr = hook_tr.times(Mat4.translation(0,2.9,0));
+        hook_tr = hook_tr.times(Mat4.translation(0,2.9,-1));
         if(!this.isHookDropped) {
             let angle_temp=Math.PI / 2.2 * Math.sin(t/0.8);
             hook_tr = hook_tr
@@ -212,7 +214,17 @@ export class WalkingGoldMiner extends Scene {
                 hook_tr = hook_tr
                     .times(Mat4.translation(0, -(t - this.dropTime) * 20, 0));
                 this.hookPullYPos=-(t - this.dropTime) * 20;
+                this.hookDropPos_y= (2.9-Math.abs((t - this.dropTime) * 20 * 0.4 * Math.cos(this.hookAngle))) ;
+                this.hookDropPos_x=(t - this.dropTime) * 20 *0.4 * Math.sin(this.hookAngle) ;
                 this.pullTime=t;
+
+                //check collision here!!!!!!!!!!!!!!!!!!!! use hookDropPos_y & hookDropPos_x
+
+                //test
+                /*let gol_tr= Mat4.identity();
+                gol_tr= gol_tr.times(Mat4.translation(this.hookDropPos_x,this.hookDropPos_y,-1))
+                this.shapes.planet_1.draw(context, program_state, gol_tr, this.materials.hook)*/
+
             }else{
                 hook_tr = hook_tr
                     .times(Mat4.translation(0,this.hookPullYPos,0))
@@ -221,12 +233,24 @@ export class WalkingGoldMiner extends Scene {
                                     //Otherwise the hook will not be at the original position
                 {
                     this.isHookDropped = false;
+                    this.hookDropPos_x=-999;
+                    this.hookDropPos_y=-999;
                 }
             }
         }
+
         this.shapes.hook.draw(context, program_state, hook_tr, this.materials.hook);
 
+/*        let test_tr= Mat4.identity();
+        test_tr= test_tr.times(Mat4.translation(3,0,0))
+        this.shapes.planet_1.draw(context, program_state, test_tr, this.materials.hook)
 
+        let test2_tr= Mat4.identity();
+        test2_tr= test2_tr
+            .times(Mat4.scale(0.4,0.4,0.4))
+            .times(Mat4.translation(3/0.4,0,12))
+
+        this.shapes.planet_1.draw(context, program_state, test2_tr, this.materials.gold)*/
 
         /*if (this.attached) {
             if (this.attached() == null)
