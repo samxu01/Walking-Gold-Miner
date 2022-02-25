@@ -114,8 +114,8 @@ export class WalkingGoldMiner extends Scene {
                 this.collide = true;
                 this.collide_x = x_list[i];
                 this.collide_y = y_list[i];
-                x_list[i] = -999;
-                y_list[i] = -999;
+                x_list[i] = -99;
+                y_list[i] = -99;
                 this.pullSpeed=10;
                 return true;
             }
@@ -192,7 +192,12 @@ export class WalkingGoldMiner extends Scene {
         this.shapes.planet_1.draw(context, program_state, stone_tr, this.materials.stone)
         //draw gold
         let gold_tr= Mat4.identity();
-        gold_tr= gold_tr.times(Mat4.translation(0,0,-1))
+        gold_tr= gold_tr.times(Mat4.translation(this.x_list[1],this.y_list[1],-1))
+        if (this.collide_x === 0 && this.collide_y === 0)
+        {
+            gold_tr = this.hookTr;
+            gold_tr = gold_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+        }
         this.shapes.planet_1.draw(context, program_state, gold_tr, this.materials.gold)
 
         //draw back wall
