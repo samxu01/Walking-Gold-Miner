@@ -15,8 +15,8 @@ export class WalkingGoldMiner extends Scene {
         this.position=0;
         this.light=false;
         this.time=0;
-        this.x_list=[4, 0, 12];
-        this.y_list=[-3, 0, -3];
+        this.x_list=[4, 0, 12, -3 , -6, -7];
+        this.y_list=[-3, 0, -3, -7, -8, -5];
         this.collide=false;
         this.collide_x=-99;
         this.collide_y=-99;
@@ -190,6 +190,25 @@ export class WalkingGoldMiner extends Scene {
             stone_tr = stone_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
         }
         this.shapes.planet_1.draw(context, program_state, stone_tr, this.materials.stone)
+
+        let stone2_tr = Mat4.identity();
+        stone2_tr = stone2_tr.times(Mat4.translation(this.x_list[4],this.y_list[4],-1))
+        if (this.collide_x === -6 && this.collide_y === -8)
+        {
+            stone2_tr = this.hookTr;
+            stone2_tr = stone2_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+        }
+        this.shapes.planet_1.draw(context, program_state, stone2_tr, this.materials.stone)
+
+        let stone3_tr = Mat4.identity();
+        stone3_tr = stone3_tr.times(Mat4.translation(this.x_list[5],this.y_list[5],-1))
+        if (this.collide_x === -7 && this.collide_y === -5)
+        {
+            stone3_tr = this.hookTr;
+            stone3_tr = stone3_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+        }
+        this.shapes.planet_1.draw(context, program_state, stone3_tr, this.materials.stone)
+
         //draw gold
         let gold_tr= Mat4.identity();
         gold_tr= gold_tr.times(Mat4.translation(this.x_list[1],this.y_list[1],-1))
@@ -208,6 +227,15 @@ export class WalkingGoldMiner extends Scene {
             gold2_tr = gold2_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
         }
         this.shapes.planet_1.draw(context, program_state, gold2_tr, this.materials.gold)
+
+        let gold3_tr= Mat4.identity();
+        gold3_tr= gold3_tr.times(Mat4.translation(this.x_list[3],this.y_list[3],-1))
+        if (this.collide_x === -3 && this.collide_y === -7)
+        {
+            gold3_tr = this.hookTr;
+            gold3_tr = gold3_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+        }
+        this.shapes.planet_1.draw(context, program_state, gold3_tr, this.materials.gold)
 
         //draw back wall
         let wall_tr= Mat4.identity();
