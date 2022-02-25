@@ -18,8 +18,8 @@ export class WalkingGoldMiner extends Scene {
         this.x_list=[4, 0];
         this.y_list=[-3, 0];
         this.collide=false;
-        this.collide_x=-999;
-        this.collide_y=-999;
+        this.collide_x=-99;
+        this.collide_y=-99;
         this.hookTr = null;
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
@@ -181,7 +181,7 @@ export class WalkingGoldMiner extends Scene {
         }
 
         this.shapes.planet_2.draw(context, program_state, chrac_tr, this.materials.planet_2)
-
+        
         let stone_tr = Mat4.identity();
         stone_tr = stone_tr.times(Mat4.translation(this.x_list[0],this.y_list[0],-1))
         if (this.collide_x === 4 && this.collide_y === -3)
@@ -258,6 +258,7 @@ export class WalkingGoldMiner extends Scene {
                 this.dropDistance=(t - this.dropTime) * 20;
 
                 let ifCollide = this.detect_collision(this.x_list,this.y_list,this.hookDropPos_x,this.hookDropPos_y);
+                this.hookTr = hook_tr;
                 if(!ifCollide){
                     this.pullSpeed=50;
                 }
