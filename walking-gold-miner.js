@@ -66,11 +66,10 @@ export class WalkingGoldMiner extends Scene {
             ground: new Material(new defs.Phong_Shader(),
                 {ambient: 0.5, diffusivity: 1, specular: 0.5, color: hex_color("#252323")}),
             hook: new Material(new defs.Phong_Shader(),
-                {ambient: 1, color: hex_color("#FF0000")}),
+                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#ffffff")}),
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 4, 20), vec3(0, 0, 0), vec3(0, 4, 0));
-
         this.isHookDropped=false;
         this.hookAngle=0;
         this.dropTime=0;
