@@ -38,6 +38,7 @@ export class WalkingGoldMiner extends Scene {
             backwall: new defs.Cube,
             flashbang: new defs.Cylindrical_Tube(3,15, [[0, 1], [0, 1]]),
             hook: new Shape_From_File("assets/hook.obj"),
+            miner: new Shape_From_File("assets/miner.obj")
         };
 
         // *** Materials
@@ -73,6 +74,9 @@ export class WalkingGoldMiner extends Scene {
                 {ambient: 0.5, diffusivity: 1, specular: 0.5, color: hex_color("#252323")}),
             hook: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#ffffff")}),
+            miner: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#e58f48")}),
+
         }
 
         //use for hook transformation
@@ -164,7 +168,7 @@ export class WalkingGoldMiner extends Scene {
             this.position-=0.1;
             this.left=false;
         }
-        chrac_tr = chrac_tr.times(Mat4.translation(this.position,5.1,0))
+        chrac_tr = chrac_tr.times(Mat4.translation(this.position,5.6,0))
         program_state.lights = [new Light(vec4(this.position,20, 0, 1), color(1, 1, 1, 1), 10)];
         if(this.light===true)
         {
@@ -180,7 +184,7 @@ export class WalkingGoldMiner extends Scene {
             }
         }
 
-        this.shapes.planet_2.draw(context, program_state, chrac_tr, this.materials.planet_2)
+        this.shapes.miner.draw(context, program_state, chrac_tr, this.materials.miner)
 
         let stone_tr = Mat4.identity();
         stone_tr = stone_tr.times(Mat4.translation(this.x_list[0],this.y_list[0],-1))
