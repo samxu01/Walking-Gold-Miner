@@ -8,7 +8,11 @@ export class WalkingGoldMiner extends Scene {
     constructor() {
         // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
         super();
-
+        this.left=false;
+        this.right=false;
+        this.position=0;
+        this.light=false;
+        this.time=0;
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
             torus: new defs.Torus(15, 15),
@@ -19,11 +23,12 @@ export class WalkingGoldMiner extends Scene {
             //        (Requirement 1)
             sun: new defs.Subdivision_Sphere(4),
             planet_1: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1.5),
-            planet_2: new defs.Subdivision_Sphere(3),
+            planet_2: new defs.Subdivision_Sphere(4),
             planet_3: new defs.Subdivision_Sphere(4),
             planet_4: new defs.Subdivision_Sphere(4),
             moon: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1),
             backwall: new defs.Cube,
+            flashbang: new defs.Cylindrical_Tube(3,15, [[0, 1], [0, 1]])
         };
 
         // *** Materials
@@ -36,13 +41,13 @@ export class WalkingGoldMiner extends Scene {
             // TODO:  Fill in as many additional material objects as needed in this key/value table.
             //        (Requirement 4)
             sun: new Material(new defs.Phong_Shader(),
-                {ambient: 1, color: color(1, 0, 0, 1)}),
+                {ambient: 1, color: color(1, 1, 1, 1)}),
             gold: new Material(new defs.Phong_Shader(),
-                {ambient: 1, color: hex_color("#FFD700")}),
+                {ambient: 0, color: hex_color("#FFD700")}),
             stone: new Material(new defs.Phong_Shader(),
                 {ambient: 0, color: hex_color("#a8a3a3")}),
             planet_2: new Material(new defs.Phong_Shader(),
-                {ambient: 0, diffusivity: .2, specular: 1, color: hex_color("#80FFFF")}),
+                {ambient: 1, diffusivity: .2, specular: 1, color: hex_color("#80FFFF")}),
             planet_2_g: new Material(new Gouraud_Shader(),
                 {ambient: 0, diffusivity: .2, specular: 1, color: hex_color("#80FFFF")}),
             planet_3: new Material(new defs.Phong_Shader(),
@@ -60,20 +65,22 @@ export class WalkingGoldMiner extends Scene {
 
         }
 
-        this.initial_camera_location = Mat4.look_at(vec3(0, 2, 20), vec3(0, 0, 0), vec3(0, 4, 0));
+        this.initial_camera_location = Mat4.look_at(vec3(0, 4, 20), vec3(0, 0, 0), vec3(0, 4, 0));
     }
 
     make_control_panel() {
         // Draw the scene's buttons, setup their actions and keyboard shortcuts, and monitor live measurements.
         this.key_triggered_button("View solar system", ["Control", "0"], () => this.attached = () => null);
         this.new_line();
-        this.key_triggered_button("Attach to planet 1", ["Control", "1"], () => this.attached = () => this.planet_1);
-        this.key_triggered_button("Attach to planet 2", ["Control", "2"], () => this.attached = () => this.planet_2);
-        this.new_line();
-        this.key_triggered_button("Attach to planet 3", ["Control", "3"], () => this.attached = () => this.planet_3);
-        this.key_triggered_button("Attach to planet 4", ["Control", "4"], () => this.attached = () => this.planet_4);
-        this.new_line();
-        this.key_triggered_button("Attach to moon", ["Control", "m"], () => this.attached = () => this.moon);
+        this.key_triggered_button("move to the right", ["e"], () => {
+            this.right=true;
+        });
+        this.key_triggered_button("move to the left", ["q"], () => {
+            this.left=true;
+        });
+        this.key_triggered_button("drop a light", ["x"], () => {
+            this.light=true;
+        });
     }
 
     display(context, program_state) {
@@ -103,18 +110,44 @@ export class WalkingGoldMiner extends Scene {
         program_state.lights = [new Light(vec4(0, 0, 0, 1), color(1, whiteness, whiteness, 1), 10 ** sun_scale)];
         this.shapes.sun.draw(context, program_state, sun_transform, sun_material);*/
 
-        //draw gold
-        let gold_tr= Mat4.identity();
-        gold_tr= gold_tr.times(Mat4.translation(0,0,-1))
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
-        const omega = (1/10) * Math.PI;
-        const whiteness = (1/2) * Math.cos(omega * t) + 1/2;
-        program_state.lights = [new Light(vec4(0, -10*t, 0, 1), color(whiteness, whiteness, whiteness, 1), 100**whiteness)];
-        this.shapes.planet_1.draw(context, program_state, gold_tr, this.materials.gold)
+        //draw character
+        let chrac_tr = Mat4.identity();
+        if (this.right===true && this.light===false)
+        {
+            this.position+=0.1;
+            this.right=false;
+        }
+        else if (this.left===true && this.light===false)
+        {
+            this.position-=0.1;
+            this.left=false;
+        }
+        chrac_tr = chrac_tr.times(Mat4.translation(this.position,5.1,0))
+        program_state.lights = [new Light(vec4(this.position,20, 0, 1), color(1, 1, 1, 1), 10)];
+        if(this.light===true)
+        {
+            this.time+=0.05;
+            program_state.lights.push(new Light(vec4(this.position,-1*(this.time)+5, 0, 1), color(1, 1, 1, 1), 5));
+            let flash_tr= Mat4.identity();
+            flash_tr=flash_tr.times(Mat4.translation(this.position,-1*(this.time)+5,1)).times(Mat4.scale(0.05,0.8,0.05)).times(Mat4.rotation(Math.PI/2,1,0,0));
+            this.shapes.flashbang.draw(context, program_state, flash_tr, this.materials.sun)
+            if(this.time>=30)
+            {
+                this.light=false;
+                this.time=0;
+            }
+        }
+
+        this.shapes.planet_2.draw(context, program_state, chrac_tr, this.materials.planet_2)
 
         let stone_tr = Mat4.identity();
         stone_tr = stone_tr.times(Mat4.translation(4,-3,-1))
         this.shapes.planet_1.draw(context, program_state, stone_tr, this.materials.stone)
+        //draw gold
+        let gold_tr= Mat4.identity();
+        gold_tr= gold_tr.times(Mat4.translation(0,0,-1))
+        this.shapes.planet_1.draw(context, program_state, gold_tr, this.materials.gold)
 
         //draw back wall
         let wall_tr= Mat4.identity();
@@ -133,7 +166,7 @@ export class WalkingGoldMiner extends Scene {
 
         //draw upper wall
         let uwall_tr= Mat4.identity();
-        uwall_tr= uwall_tr.times(Mat4.translation(0,4,0)).times(Mat4.scale(20, 0.1, 2))
+        uwall_tr= uwall_tr.times(Mat4.translation(0,4,0)).times(Mat4.scale(20, 0.1, 3))
         this.shapes.backwall.draw(context, program_state, uwall_tr, this.materials.ground)
 
         //draw bottom wall
