@@ -26,7 +26,7 @@ export class WalkingGoldMiner extends Scene {
             planet_4: new defs.Subdivision_Sphere(4),
             moon: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1),
             backwall: new defs.Cube,
-            miner: new Shape_From_File("assets/miner.obj"),
+            hook: new Shape_From_File("assets/hook.obj"),
         };
 
         // *** Materials
@@ -59,16 +59,23 @@ export class WalkingGoldMiner extends Scene {
             Wall: new Material(new defs.Textured_Phong(1),
                 {ambient: 0.5, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil-textures.png")}),
             ground: new Material(new defs.Phong_Shader(),
-                {ambient: 0.5, diffusivity: 1, specular: 0.5, color: hex_color("#252323")})
-
+                {ambient: 0.5, diffusivity: 1, specular: 0.5, color: hex_color("#252323")}),
+            hook: new Material(new defs.Phong_Shader(),
+                {ambient: 1, color: hex_color("#FF0000")}),
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 2, 20), vec3(0, 0, 0), vec3(0, 4, 0));
+
+        this.isHookDropped=false;
+        this.hookAngle=0;
+        this.dropTime=0;
+        this.hookPullYPos=0;
+        this.pullTime=0;
     }
 
     make_control_panel() {
         // Draw the scene's buttons, setup their actions and keyboard shortcuts, and monitor live measurements.
-        this.key_triggered_button("View solar system", ["Control", "0"], () => this.attached = () => null);
+        /*this.key_triggered_button("View solar system", ["Control", "0"], () => this.attached = () => null);
         this.new_line();
         this.key_triggered_button("Attach to planet 1", ["Control", "1"], () => this.attached = () => this.planet_1);
         this.key_triggered_button("Attach to planet 2", ["Control", "2"], () => this.attached = () => this.planet_2);
@@ -76,8 +83,12 @@ export class WalkingGoldMiner extends Scene {
         this.key_triggered_button("Attach to planet 3", ["Control", "3"], () => this.attached = () => this.planet_3);
         this.key_triggered_button("Attach to planet 4", ["Control", "4"], () => this.attached = () => this.planet_4);
         this.new_line();
-        this.key_triggered_button("Attach to moon", ["Control", "m"], () => this.attached = () => this.moon);
+        this.key_triggered_button("Attach to moon", ["Control", "m"], () => this.attached = () => this.moon);*/
+        this.key_triggered_button("Drop Hook", ["x"], () => {
+            this.isHookDropped=true;
+        });
     }
+
 
     display(context, program_state) {
         // display():  Called once per frame of animation.
@@ -144,12 +155,50 @@ export class WalkingGoldMiner extends Scene {
         bwall_tr= bwall_tr.times(Mat4.translation(0,-12,0)).times(Mat4.scale(20, 0.1, 2))
         this.shapes.backwall.draw(context, program_state, bwall_tr, this.materials.Wall)
 
-        //place miner
+        /*//place miner
         let miner_tr=Mat4.identity();
-        this.shapes.miner.draw(context, program_state, miner_tr, this.materials.miner)
+        this.shapes.miner.draw(context, program_state, miner_tr, this.materials.miner)*/
+
+        //hook
+        let hook_tr=Mat4.identity();
+        hook_tr = hook_tr.times(Mat4.translation(0,2.9,0));
+        if(!this.isHookDropped) {
+            let angle_temp=Math.PI / 2.2 * Math.sin(t/0.8);
+            hook_tr = hook_tr
+                .times(Mat4.translation(0,1,0))
+                .times(Mat4.rotation( angle_temp,0, 0, 1))
+                .times(Mat4.translation(0,-1,0))
+                .times(Mat4.scale(0.4, 0.4, 0.4));
+            this.hookAngle=angle_temp;
+            this.dropTime=t;
+        }else{
+            hook_tr = hook_tr
+                .times(Mat4.translation(0,1,0))
+                .times(Mat4.rotation(this.hookAngle, 0, 0, 1))
+                .times(Mat4.translation(0,-1,0))
+                .times(Mat4.scale(0.4, 0.4, 0.4))
+
+            if(t-this.dropTime<2) {
+                hook_tr = hook_tr
+                    .times(Mat4.translation(0, -(t - this.dropTime) * 20, 0));
+                this.hookPullYPos=-(t - this.dropTime) * 20;
+                this.pullTime=t;
+            }else{
+                hook_tr = hook_tr
+                    .times(Mat4.translation(0,this.hookPullYPos,0))
+                    .times(Mat4.translation(0,(t-this.pullTime)*50 /*pull speed*/,0));
+                if(t-this.pullTime>0.8)//Time upperbound needs to be changed according to pull speed
+                                    //Otherwise the hook will not be at the original position
+                {
+                    this.isHookDropped = false;
+                }
+            }
+        }
+        this.shapes.hook.draw(context, program_state, hook_tr, this.materials.hook);
 
 
-        if (this.attached) {
+
+        /*if (this.attached) {
             if (this.attached() == null)
             {
                 let desired = this.initial_camera_location.map( (x,i) =>
@@ -163,7 +212,7 @@ export class WalkingGoldMiner extends Scene {
                     Vector.from( program_state.camera_inverse[i] ).mix( x, 0.1 ) );
                 program_state.set_camera(desired);
             }
-        }
+        }*/
         // TODO:  Fill in matrix operations and drawing code to draw the solar system scene (Requirements 3 and 4)
     }
 }
