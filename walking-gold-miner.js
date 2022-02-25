@@ -191,7 +191,7 @@ export class WalkingGoldMiner extends Scene {
         if (this.collide_x === 4 && this.collide_y === -3)
         {
             stone_tr = this.hookTr;
-            stone_tr = stone_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+            stone_tr = stone_tr.times(Mat4.translation(0,-2,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
         }
         this.shapes.planet_1.draw(context, program_state, stone_tr, this.materials.stone)
 
@@ -200,7 +200,7 @@ export class WalkingGoldMiner extends Scene {
         if (this.collide_x === -6 && this.collide_y === -8)
         {
             stone2_tr = this.hookTr;
-            stone2_tr = stone2_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+            stone2_tr = stone2_tr.times(Mat4.translation(0,-2,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
         }
         this.shapes.planet_1.draw(context, program_state, stone2_tr, this.materials.stone)
 
@@ -209,7 +209,7 @@ export class WalkingGoldMiner extends Scene {
         if (this.collide_x === -7 && this.collide_y === -5)
         {
             stone3_tr = this.hookTr;
-            stone3_tr = stone3_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+            stone3_tr = stone3_tr.times(Mat4.translation(0,-2,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
         }
         this.shapes.planet_1.draw(context, program_state, stone3_tr, this.materials.stone)
 
@@ -219,7 +219,7 @@ export class WalkingGoldMiner extends Scene {
         if (this.collide_x === 0 && this.collide_y === 0)
         {
             gold_tr = this.hookTr;
-            gold_tr = gold_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+            gold_tr = gold_tr.times(Mat4.translation(0,-2,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
         }
         this.shapes.planet_1.draw(context, program_state, gold_tr, this.materials.gold)
 
@@ -228,7 +228,7 @@ export class WalkingGoldMiner extends Scene {
         if (this.collide_x === 12 && this.collide_y === -3)
         {
             gold2_tr = this.hookTr;
-            gold2_tr = gold2_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+            gold2_tr = gold2_tr.times(Mat4.translation(0,-2,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
         }
         this.shapes.planet_1.draw(context, program_state, gold2_tr, this.materials.gold)
 
@@ -237,7 +237,7 @@ export class WalkingGoldMiner extends Scene {
         if (this.collide_x === -3 && this.collide_y === -7)
         {
             gold3_tr = this.hookTr;
-            gold3_tr = gold3_tr.times(Mat4.translation(0,-1,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
+            gold3_tr = gold3_tr.times(Mat4.translation(0,-2,0)).times(Mat4.inverse(Mat4.scale(0.4, 0.4, 0.4)));
         }
         this.shapes.planet_1.draw(context, program_state, gold3_tr, this.materials.gold)
 
