@@ -82,10 +82,14 @@ export class WalkingGoldMiner extends Scene {
         this.dropTime=0;
         this.hookPullYPos=0;
         this.pullTime=0;
+        this.dropDistance=0;
 
         //use to check collision
         this.hookDropPos_x=-999
         this.hookDropPos_y=-999;
+
+        //game parameter
+        this.pullSpeed=0;
     }
 
     make_control_panel() {
@@ -112,8 +116,11 @@ export class WalkingGoldMiner extends Scene {
                 this.collide_y = y_list[i];
                 x_list[i] = -999;
                 y_list[i] = -999;
+                this.pullSpeed=10;
+                return true;
             }
         }
+        return false;
     }
 
 
@@ -217,6 +224,8 @@ export class WalkingGoldMiner extends Scene {
         //hook
         let hook_tr=Mat4.identity();
         hook_tr = hook_tr.times(Mat4.translation(0,2.9,-1));
+
+        //hook before dropping
         if(!this.isHookDropped) {
             let angle_temp=Math.PI / 2.2 * Math.sin(t/0.8);
             hook_tr = hook_tr
@@ -233,15 +242,20 @@ export class WalkingGoldMiner extends Scene {
                 .times(Mat4.translation(0,-1,0))
                 .times(Mat4.scale(0.4, 0.4, 0.4))
 
-            if(t-this.dropTime<2 && !this.collide) {
+            //drop hook + collision detect
+            if(this.dropDistance<40 && !this.collide) {
                 hook_tr = hook_tr
                     .times(Mat4.translation(0, -(t - this.dropTime) * 20, 0));
                 this.hookPullYPos=-(t - this.dropTime) * 20;
                 this.hookDropPos_y= (2.9-Math.abs((t - this.dropTime) * 20 * 0.4 * Math.cos(this.hookAngle))) ;
                 this.hookDropPos_x=(t - this.dropTime) * 20 *0.4 * Math.sin(this.hookAngle) ;
                 this.pullTime=t;
+                this.dropDistance=(t - this.dropTime) * 20;
 
-                this.detect_collision(this.x_list,this.y_list,this.hookDropPos_x,this.hookDropPos_y);
+                let ifCollide = this.detect_collision(this.x_list,this.y_list,this.hookDropPos_x,this.hookDropPos_y);
+                if(!ifCollide){
+                    this.pullSpeed=50;
+                }
                 //check collision here!!!!!!!!!!!!!!!!!!!! use hookDropPos_y & hookDropPos_x
 
                 //test
@@ -251,9 +265,9 @@ export class WalkingGoldMiner extends Scene {
             }else{
                 hook_tr = hook_tr
                     .times(Mat4.translation(0,this.hookPullYPos,0))
-                    .times(Mat4.translation(0,(t-this.pullTime)*20 /*pull speed*/,0));
+                    .times(Mat4.translation(0,(t-this.pullTime)*this.pullSpeed /*pull speed*/,0));
                 this.hookTr = hook_tr;
-                if(t-this.pullTime>0.8)//Time upperbound needs to be changed according to pull speed
+                if((t-this.pullTime)*this.pullSpeed>this.dropDistance)//Time upperbound needs to be changed according to pull speed
                                     //Otherwise the hook will not be at the original position
                 {
                     this.collide = false;
@@ -262,6 +276,7 @@ export class WalkingGoldMiner extends Scene {
                     this.hookDropPos_y=-999;
                     this.collide_x = -999;
                     this.collide_y = -999;
+                    this.dropDistance=0;
                 }
             }
         }
