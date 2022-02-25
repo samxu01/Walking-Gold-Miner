@@ -110,6 +110,8 @@ export class WalkingGoldMiner extends Scene {
                 this.collide = true;
                 this.collide_x = x_list[i];
                 this.collide_y = y_list[i];
+                x_list[i] = -999;
+                y_list[i] = -999;
             }
         }
     }
@@ -174,7 +176,7 @@ export class WalkingGoldMiner extends Scene {
         this.shapes.planet_2.draw(context, program_state, chrac_tr, this.materials.planet_2)
 
         let stone_tr = Mat4.identity();
-        stone_tr = stone_tr.times(Mat4.translation(4,-3,-1))
+        stone_tr = stone_tr.times(Mat4.translation(this.x_list[0],this.y_list[0],-1))
         if (this.collide_x === 4 && this.collide_y === -3)
         {
             stone_tr = this.hookTr;
