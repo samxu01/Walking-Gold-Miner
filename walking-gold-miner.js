@@ -277,10 +277,10 @@ export class WalkingGoldMiner extends Scene {
 
         //draw skyscraper
         let skyscraper_tr = Mat4.identity();
-        let skyscraper_tr_1 = skyscraper_tr.times(Mat4.translation(-4,5.8,0)).times(Mat4.scale(1, 1.8, 1))
-        let skyscraper_tr_2 = skyscraper_tr.times(Mat4.translation(-9,6,0)).times(Mat4.scale(1.5, 2, 1.5))
-        let skyscraper_tr_3 = skyscraper_tr.times(Mat4.translation(4,6,0)).times(Mat4.scale(1, 2, 1))
-        let skyscraper_tr_4 = skyscraper_tr.times(Mat4.translation(7,5.8,0)).times(Mat4.scale(1, 1.8, 1))
+        let skyscraper_tr_1 = skyscraper_tr.times(Mat4.translation(-4,5.8,-4)).times(Mat4.scale(1, 1.8, 1))
+        let skyscraper_tr_2 = skyscraper_tr.times(Mat4.translation(-9,6,-4)).times(Mat4.scale(1, 2, 1))
+        let skyscraper_tr_3 = skyscraper_tr.times(Mat4.translation(4,6,-4)).times(Mat4.scale(1, 2, 1))
+        let skyscraper_tr_4 = skyscraper_tr.times(Mat4.translation(7,5.8,-4)).times(Mat4.scale(1, 1.8, 1))
         this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_1, this.materials.skyscraper)
         this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_2, this.materials.skyscraper)
         this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_3, this.materials.skyscraper)
