@@ -51,7 +51,7 @@ export class WalkingGoldMiner extends Scene {
             skyscraper: new Material(new defs.Textured_Phong(1),
                 {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/skyscraper.jpg")}),
             sky: new Material(new defs.Textured_Phong(1),
-                {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/blue-sky.png")}),
+                {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/night.jpg")}),
             Wall: new Material(new defs.Textured_Phong(1),
                 {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil4.jpg")}),
             ground: new Material(new defs.Phong_Shader(),
@@ -125,9 +125,6 @@ export class WalkingGoldMiner extends Scene {
 
         program_state.projection_transform = Mat4.perspective(
             Math.PI / 4, context.width / context.height, .1, 1000);
-
-        // TODO: Create Planets (Requirement 1)
-        // this.shapes.[XXX].draw([XXX]) // <--example
 
 
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
@@ -254,8 +251,8 @@ export class WalkingGoldMiner extends Scene {
 
         //draw background
         let wallb_tr= Mat4.identity();
-        wallb_tr=wallb_tr.times(Mat4.translation(0,9,-2)).times(Mat4.scale(20, 5, 0.1))
-        //this.shapes.backwall.draw(context, program_state, wallb_tr, this.materials.background)
+        wallb_tr=wallb_tr.times(Mat4.translation(0,9,-5)).times(Mat4.scale(20, 30, 0.1).times(Mat4.rotation(0.01*t, 0, 0, 1)))
+        this.shapes.backwall.draw(context, program_state, wallb_tr, this.materials.sky)
 
         //draw back wall
         let wall_tr= Mat4.identity();
@@ -293,11 +290,6 @@ export class WalkingGoldMiner extends Scene {
         this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_2, this.materials.skyscraper)
         this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_3, this.materials.skyscraper)
         this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_4, this.materials.skyscraper)
-
-        //draw sky
-        let sky_tr = Mat4.identity();
-        sky_tr = sky_tr.times(Mat4.translation(0,15,-50)).times(Mat4.scale(80, 15, 15)).times(Mat4.rotation(0.01*t, 0, 1, 0))
-        this.shapes.sphere.draw(context, program_state, sky_tr, this.materials.sky)
 
         //hook
         let hook_tr=Mat4.identity();
