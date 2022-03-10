@@ -10,6 +10,10 @@ export class WalkingGoldMiner extends Scene {
     constructor() {
         // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
         super();
+        this.light_x=0;
+        this.light_y=0;
+        this.light_time=0;
+        this.fireflies=true;
         this.left=false;
         this.right=false;
         this.position=0;
@@ -48,6 +52,8 @@ export class WalkingGoldMiner extends Scene {
             // TODO:  Fill in as many additional material objects as needed in this key/value table.
             //        (Requirement 4)
             sun: new Material(new defs.Phong_Shader(),
+                {ambient: 1, color: color(1, 1, 1, 1)}),
+            sun1: new Material(new defs.Phong_Shader(),
                 {ambient: 1, color: color(1, 1, 1, 1)}),
             gold: new Material(new defs.Phong_Shader(),
                 {ambient: 0, color: hex_color("#FFD700")}),
@@ -146,19 +152,9 @@ export class WalkingGoldMiner extends Scene {
         // TODO: Create Planets (Requirement 1)
         // this.shapes.[XXX].draw([XXX]) // <--example
 
-        /*// draw the sun
-        const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
-        const omega = (1/10) * Math.PI;
-        const whiteness = (1/2) * Math.cos(omega * t) + 1/2;
-        let sun_material = this.materials.sun;
-        sun_material.color = color(1, whiteness, whiteness, 1);
-        let sun_transform = Mat4.identity();
-        const sun_scale = Math.cos(omega * t) + 2;
-        sun_transform = sun_transform.times(Mat4.scale(sun_scale, sun_scale, sun_scale));
-        program_state.lights = [new Light(vec4(0, 0, 0, 1), color(1, whiteness, whiteness, 1), 10 ** sun_scale)];
-        this.shapes.sun.draw(context, program_state, sun_transform, sun_material);*/
 
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
+
         //draw character
         let chrac_tr = Mat4.identity();
         if (this.right===true && this.light===false)
@@ -179,12 +175,47 @@ export class WalkingGoldMiner extends Scene {
             program_state.lights.push(new Light(vec4(this.position,-1*(this.time)+5, 0, 1), color(1, 1, 1, 1), 5));
             let flash_tr= Mat4.identity();
             flash_tr=flash_tr.times(Mat4.translation(this.position,-1*(this.time)+5,1)).times(Mat4.scale(0.05,0.8,0.05)).times(Mat4.rotation(Math.PI/2,1,0,0));
-            this.shapes.flashbang.draw(context, program_state, flash_tr, this.materials.sun)
+            this.shapes.flashbang.draw(context, program_state, flash_tr, this.materials.sun1)
             if(this.time>=30)
             {
                 this.light=false;
                 this.time=0;
             }
+        }
+        if (this.light_time<0)
+        {
+            this.fireflies=false;
+            this.light_time+=0.01;
+        }
+        else if (this.light_time < 9)
+        {
+            this.fireflies=true;
+            this.light_time+=0.01;
+        }
+        else
+        {
+            this.fireflies=false;
+            this.light_time-=15;
+            this.light_x=Math.random()*(8 -(-8))+(-8);
+            this.light_y=Math.random()*(0 -(-8))+(-8);
+        }
+        const omega = (1/10) * Math.PI;
+        const whiteness = (1/2) * Math.cos(omega * 5*t) + 1/2;
+        let sun_material = this.materials.sun;
+        sun_material.color = color(0.5294, 0.80, 0.92, 1);
+        let brightness= 1-whiteness
+        let sun_transform = Mat4.identity();
+        const sun_scale = 0.15;
+        sun_transform = sun_transform.times(Mat4.scale(sun_scale, sun_scale, sun_scale));
+        sun_transform = sun_transform.times(Mat4.rotation(t, 0, 0, 1))
+            .times(Mat4.translation(20, 0, 0));
+        sun_transform = Mat4.translation(this.light_x,this.light_y,0).times(sun_transform);
+        if(this.fireflies==true)
+        {program_state.lights.push (new Light(vec4(this.light_x+3*Math.cos(t), this.light_y+3*Math.sin(t), 0, 1), color(0.5294, 0.80, 0.92, 1), 3**brightness));
+        this.shapes.sun.draw(context, program_state, sun_transform, sun_material);}
+        else
+        {
+            program_state.lights.push (new Light(vec4(this.light_x+3*Math.cos(t), this.light_y+3*Math.sin(t), 0, 1), color(0, 0, 0, 1), 3**brightness));
         }
 
         this.shapes.miner.draw(context, program_state, chrac_tr, this.materials.miner)
