@@ -21,6 +21,12 @@ export class WalkingGoldMiner extends Scene {
         this.collide_x=-99;
         this.collide_y=-99;
         this.hookTr = null;
+
+        this.isStopped=true;
+        this.leftArm_angle=-0.3;
+        this.rightArm_angle=0.3;
+
+
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
             sphere: new defs.Subdivision_Sphere(4),
@@ -34,7 +40,10 @@ export class WalkingGoldMiner extends Scene {
             backwall: new defs.Cube,
             flashbang: new defs.Cylindrical_Tube(3,15, [[0, 1], [0, 1]]),
             hook: new Shape_From_File("assets/hook.obj"),
-            miner: new Shape_From_File("assets/miner.obj")
+            miner: new Shape_From_File("assets/miner.obj"),
+            miner_head: new defs.Subdivision_Sphere(4),
+            miner_hat:new defs.Rounded_Closed_Cone(15,15,[[0, 1], [0, 1]]),
+            miner_body: new defs.Cube,
         };
 
         // *** Materials
@@ -71,9 +80,21 @@ export class WalkingGoldMiner extends Scene {
             hook: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#ffffff")}),
             miner: new Material(new defs.Phong_Shader(),
-                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#e58f48")}),
+                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#CC9877")}),
             background: new Material(new defs.Textured_Phong(1),
                 {ambient: 1, diffusivity: 1, specular: 1, texture: new Texture("assets/city.png")}),
+            miner_skin: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#CC9877")}),
+            miner_hat: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#FF7A1F")}),
+            miner_cloth: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#6A6A6A")}),
+            miner_pants: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#223D5F")}),
+            miner_beard: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#301F03")}),
+            miner_eye: new Material(new defs.Phong_Shader(),
+                {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#000000")}),
 
         }
 
@@ -98,9 +119,11 @@ export class WalkingGoldMiner extends Scene {
         // Draw the scene's buttons, setup their actions and keyboard shortcuts, and monitor live measurements.
         this.key_triggered_button("move to the right", ["e"], () => {
             this.right=true;
+            this.isStopped=false;
         });
         this.key_triggered_button("move to the left", ["q"], () => {
             this.left=true;
+            this.isStopped=false;
         });
         this.key_triggered_button("drop a light", ["c"], () => {
             this.light=true;
@@ -127,6 +150,8 @@ export class WalkingGoldMiner extends Scene {
 
 
     display(context, program_state) {
+
+        const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
         // display():  Called once per frame of animation.
         // Setup -- This part sets up the scene's overall camera matrix, projection matrix, and lights:
         if (!context.scratchpad.controls) {
@@ -153,9 +178,20 @@ export class WalkingGoldMiner extends Scene {
         program_state.lights = [new Light(vec4(0, 0, 0, 1), color(1, whiteness, whiteness, 1), 10 ** sun_scale)];
         this.shapes.sun.draw(context, program_state, sun_transform, sun_material);*/
 
-        const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
         //draw character
-        let chrac_tr = Mat4.identity();
+        //let chrac_tr = Mat4.identity();
+        let miner_head_tr  = Mat4.identity();
+        let miner_hat_tr  = Mat4.identity();
+        let miner_arm_left_tr  = Mat4.identity();
+        let miner_arm_right_tr  = Mat4.identity();
+        let miner_cloth_tr  = Mat4.identity();
+        let miner_leg_left_tr  = Mat4.identity();
+        let miner_leg_right_tr  = Mat4.identity();
+        let miner_beard_tr  = Mat4.identity();
+        let miner_eye_left_tr  = Mat4.identity();
+        let miner_eye_right_tr  = Mat4.identity();
+
+
         if (this.right===true && this.light===false)
         {
             this.position+=0.1;
@@ -166,7 +202,93 @@ export class WalkingGoldMiner extends Scene {
             this.position-=0.1;
             this.left=false;
         }
-        chrac_tr = chrac_tr.times(Mat4.translation(this.position,5.6,0))
+
+        miner_head_tr = miner_head_tr.times(Mat4.translation(this.position,5.8,2.2))
+            .times(Mat4.scale(0.35,0.43,0.4))
+
+        miner_hat_tr = miner_hat_tr.times(Mat4.translation(this.position,6.15,2.2))
+            .times(Mat4.rotation(Math.PI/2,-1,0,0))
+            .times(Mat4.scale(0.55,0.55,0.25))
+
+        miner_arm_left_tr  = miner_arm_left_tr.times(Mat4.translation(-0.4+this.position,5.1,2.2))
+        miner_arm_right_tr  = miner_arm_right_tr.times(Mat4.translation(0.4+this.position,5.1,2.2))
+        if(!this.isStopped){
+            if(Math.floor(2*t)%2==0){
+                this.leftArm_angle-=0.02;
+                miner_arm_left_tr  = miner_arm_left_tr
+                    .times(Mat4.rotation(this.leftArm_angle,0,0,1))
+                    .times(Mat4.scale(0.13,0.4,0.13))
+
+            }else{
+                this.leftArm_angle+=0.02;
+                miner_arm_left_tr  = miner_arm_left_tr
+                    .times(Mat4.rotation(this.leftArm_angle,0,0,1))
+                    .times(Mat4.scale(0.13,0.4,0.13))
+            }
+
+            if(Math.floor(2*t)%2==0){
+                this.rightArm_angle+=0.02;
+                miner_arm_right_tr  = miner_arm_right_tr
+                    .times(Mat4.rotation(this.rightArm_angle,0,0,1))
+                    .times(Mat4.scale(0.13,0.4,0.13))
+            }else
+            {
+                this.rightArm_angle-=0.02;
+                miner_arm_right_tr  = miner_arm_right_tr
+                    .times(Mat4.rotation(this.rightArm_angle,0,0,1))
+                    .times(Mat4.scale(0.13,0.4,0.13))
+            }
+        }
+        else{
+            miner_arm_left_tr  = miner_arm_left_tr
+                .times(Mat4.rotation(this.leftArm_angle,0,0,1))
+                .times(Mat4.scale(0.13,0.4,0.13))
+
+            miner_arm_right_tr  = miner_arm_right_tr
+                .times(Mat4.rotation(this.rightArm_angle,0,0,1))
+                .times(Mat4.scale(0.13,0.4,0.13))
+        }
+
+
+
+        miner_cloth_tr  = miner_cloth_tr.times(Mat4.translation(this.position,5.12,2.2))
+            .times(Mat4.scale(0.3,0.35,0.2))
+
+        miner_leg_left_tr  = miner_leg_left_tr.times(Mat4.translation(-0.22+this.position,4.45,2.2))
+        miner_leg_right_tr  = miner_leg_right_tr.times(Mat4.translation(0.22+this.position,4.45,2.2))
+            if(!this.isStopped){
+                miner_leg_left_tr  = miner_leg_left_tr.times(Mat4.rotation(-Math.PI/13-Math.PI/13*Math.sin(2*Math.PI*t),0,0,1))
+                    .times(Mat4.scale(0.15,0.37,0.21))
+                miner_leg_right_tr  = miner_leg_right_tr.times(Mat4.rotation(Math.PI/13+Math.PI/13*Math.sin(2*Math.PI*t),0,0,1))
+                    .times(Mat4.scale(0.15,0.37,0.21))
+                this.isStopped=true;
+            }
+            else {
+                miner_leg_left_tr = miner_leg_left_tr.times(Mat4.rotation(-Math.PI / 20, 0, 0, 1))
+                    .times(Mat4.scale(0.15, 0.37, 0.21))
+                miner_leg_right_tr  = miner_leg_right_tr
+                    .times(Mat4.rotation(Math.PI/20,0,0,1))
+                    .times(Mat4.scale(0.15,0.37,0.21))
+        }
+
+
+        miner_beard_tr=miner_beard_tr.times(Mat4.translation(this.position,5.52,2.5))
+            .times(Mat4.scale(0.43,0.18,0.05))
+            .times(Mat4.rotation(Math.PI/2,1,0,0))
+
+        miner_eye_left_tr=miner_eye_left_tr.times(Mat4.translation(-0.1+this.position,5.8,2.55))
+            .times(Mat4.scale(0.05,0.07,0.05))
+
+        miner_eye_right_tr=miner_eye_right_tr.times(Mat4.translation(0.1+this.position,5.8,2.55))
+            .times(Mat4.scale(0.05,0.07,0.05))
+
+
+
+
+
+
+        //chrac_tr = chrac_tr.times(Mat4.translation(this.position,5.6,0))
+
         program_state.lights = [new Light(vec4(this.position,20, 0, 1), color(1, 1, 1, 1), 10)];
         if(this.light===true)
         {
@@ -182,7 +304,21 @@ export class WalkingGoldMiner extends Scene {
             }
         }
 
-        this.shapes.miner.draw(context, program_state, chrac_tr, this.materials.miner)
+
+
+        //this.shapes.miner.draw(context, program_state, chrac_tr, this.materials.miner)
+        this.shapes.miner_head.draw(context, program_state, miner_head_tr, this.materials.miner_skin)
+        this.shapes.miner_hat.draw(context, program_state, miner_hat_tr, this.materials.miner_hat)
+        this.shapes.miner_body.draw(context, program_state, miner_cloth_tr, this.materials.miner_cloth)
+        this.shapes.miner_head.draw(context, program_state, miner_arm_left_tr, this.materials.miner_skin)
+        this.shapes.miner_head.draw(context, program_state, miner_arm_right_tr, this.materials.miner_skin)
+        this.shapes.miner_body.draw(context, program_state, miner_leg_right_tr, this.materials.miner_pants)
+        this.shapes.miner_body.draw(context, program_state, miner_leg_left_tr, this.materials.miner_pants)
+        this.shapes.miner_hat.draw(context, program_state, miner_beard_tr, this.materials.miner_beard)
+        this.shapes.miner_head.draw(context, program_state, miner_eye_left_tr, this.materials.miner_eye)
+        this.shapes.miner_head.draw(context, program_state, miner_eye_right_tr, this.materials.miner_eye)
+
+
 
         let stone_tr = Mat4.identity();
         stone_tr = stone_tr.times(Mat4.translation(this.x_list[0],this.y_list[0],-1))
