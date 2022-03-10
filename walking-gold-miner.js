@@ -23,12 +23,8 @@ export class WalkingGoldMiner extends Scene {
         this.hookTr = null;
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
-            torus: new defs.Torus(15, 15),
-            torus2: new defs.Torus(3, 15),
             sphere: new defs.Subdivision_Sphere(4),
             circle: new defs.Regular_2D_Polygon(1, 15),
-            // TODO:  Fill in as many additional shape instances as needed in this key/value table.
-            //        (Requirement 1)
             sun: new defs.Subdivision_Sphere(4),
             planet_1: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1.5),
             planet_2: new defs.Subdivision_Sphere(4),
@@ -69,13 +65,15 @@ export class WalkingGoldMiner extends Scene {
             moon: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: 1, specular: 1, color: hex_color("#FA8072")}),
             Wall: new Material(new defs.Textured_Phong(1),
-                {ambient: 0.5, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil-textures.png")}),
+                {ambient: 0.5, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil4.jpg")}),
             ground: new Material(new defs.Phong_Shader(),
                 {ambient: 0.5, diffusivity: 1, specular: 0.5, color: hex_color("#252323")}),
             hook: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#ffffff")}),
             miner: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 1, specular: 0.5, color: hex_color("#e58f48")}),
+            background: new Material(new defs.Textured_Phong(1),
+                {ambient: 1, diffusivity: 1, specular: 1, texture: new Texture("assets/city.png")}),
 
         }
 
@@ -241,9 +239,14 @@ export class WalkingGoldMiner extends Scene {
         }
         this.shapes.planet_1.draw(context, program_state, gold3_tr, this.materials.gold)
 
+        //draw background
+        let wallb_tr= Mat4.identity();
+        wallb_tr=wallb_tr.times(Mat4.translation(0,9,-2)).times(Mat4.scale(20, 5, 0.1))
+        this.shapes.backwall.draw(context, program_state, wallb_tr, this.materials.background)
+
         //draw back wall
         let wall_tr= Mat4.identity();
-        wall_tr=wall_tr.times(Mat4.translation(0,-4,-2)).times(Mat4.scale(20, 8, 0.1))
+        wall_tr=wall_tr.times(Mat4.translation(0,-7.25,-2)).times(Mat4.scale(20, 11.25, 0.1))
         this.shapes.backwall.draw(context, program_state, wall_tr, this.materials.Wall)
 
         //draw left wall
@@ -260,6 +263,7 @@ export class WalkingGoldMiner extends Scene {
         let uwall_tr= Mat4.identity();
         uwall_tr= uwall_tr.times(Mat4.translation(0,4,0)).times(Mat4.scale(20, 0.1, 3))
         this.shapes.backwall.draw(context, program_state, uwall_tr, this.materials.ground)
+
 
         //draw bottom wall
         let bwall_tr= Mat4.identity();
