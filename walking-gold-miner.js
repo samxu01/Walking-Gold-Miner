@@ -32,6 +32,7 @@ export class WalkingGoldMiner extends Scene {
             planet_4: new defs.Subdivision_Sphere(4),
             moon: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1),
             backwall: new defs.Cube,
+            skyscraper: new defs.Cube,
             flashbang: new defs.Cylindrical_Tube(3,15, [[0, 1], [0, 1]]),
             hook: new Shape_From_File("assets/hook.obj"),
             miner: new Shape_From_File("assets/miner.obj")
@@ -64,8 +65,12 @@ export class WalkingGoldMiner extends Scene {
                 {ambient: 0, diffusivity: 1, specular: 1, color: hex_color("#C7E4EE")}),
             moon: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: 1, specular: 1, color: hex_color("#FA8072")}),
+            skyscraper: new Material(new defs.Textured_Phong(1),
+                {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/skyscraper.jpg")}),
+            sky: new Material(new defs.Textured_Phong(1),
+                {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/blue-sky.png")}),
             Wall: new Material(new defs.Textured_Phong(1),
-                {ambient: 0.5, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil4.jpg")}),
+                {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/soil4.jpg")}),
             ground: new Material(new defs.Phong_Shader(),
                 {ambient: 0.5, diffusivity: 1, specular: 0.5, color: hex_color("#252323")}),
             hook: new Material(new defs.Phong_Shader(),
@@ -242,7 +247,7 @@ export class WalkingGoldMiner extends Scene {
         //draw background
         let wallb_tr= Mat4.identity();
         wallb_tr=wallb_tr.times(Mat4.translation(0,9,-2)).times(Mat4.scale(20, 5, 0.1))
-        this.shapes.backwall.draw(context, program_state, wallb_tr, this.materials.background)
+        //this.shapes.backwall.draw(context, program_state, wallb_tr, this.materials.background)
 
         //draw back wall
         let wall_tr= Mat4.identity();
@@ -270,6 +275,21 @@ export class WalkingGoldMiner extends Scene {
         bwall_tr= bwall_tr.times(Mat4.translation(0,-12,0)).times(Mat4.scale(20, 0.1, 2))
         this.shapes.backwall.draw(context, program_state, bwall_tr, this.materials.Wall)
 
+        //draw skyscraper
+        let skyscraper_tr = Mat4.identity();
+        let skyscraper_tr_1 = skyscraper_tr.times(Mat4.translation(-4,5.8,0)).times(Mat4.scale(1, 1.8, 1))
+        let skyscraper_tr_2 = skyscraper_tr.times(Mat4.translation(-9,6,0)).times(Mat4.scale(1.5, 2, 1.5))
+        let skyscraper_tr_3 = skyscraper_tr.times(Mat4.translation(4,6,0)).times(Mat4.scale(1, 2, 1))
+        let skyscraper_tr_4 = skyscraper_tr.times(Mat4.translation(7,5.8,0)).times(Mat4.scale(1, 1.8, 1))
+        this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_1, this.materials.skyscraper)
+        this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_2, this.materials.skyscraper)
+        this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_3, this.materials.skyscraper)
+        this.shapes.skyscraper.draw(context, program_state, skyscraper_tr_4, this.materials.skyscraper)
+
+        //draw sky
+        let sky_tr = Mat4.identity();
+        sky_tr = sky_tr.times(Mat4.translation(0,15,-50)).times(Mat4.scale(80, 15, 15)).times(Mat4.rotation(0.01*t, 0, 1, 0))
+        this.shapes.sphere.draw(context, program_state, sky_tr, this.materials.sky)
 
         //hook
         let hook_tr=Mat4.identity();
