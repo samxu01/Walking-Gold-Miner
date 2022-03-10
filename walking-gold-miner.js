@@ -211,7 +211,7 @@ export class WalkingGoldMiner extends Scene {
             .times(Mat4.translation(20, 0, 0));
         sun_transform = Mat4.translation(this.light_x,this.light_y,0).times(sun_transform);
         if(this.fireflies==true)
-        {program_state.lights.push (new Light(vec4(this.light_x+3*Math.cos(t), this.light_y+3*Math.sin(t), 0, 1), color(0.5294, 0.80, 0.92, 1), 3**brightness));
+        {program_state.lights.push (new Light(vec4(this.light_x+3*Math.cos(t), this.light_y+3*Math.sin(t), 0, 1), color(0.5294, 0.80, 0.92, 1), 3**whiteness));
         this.shapes.sun.draw(context, program_state, sun_transform, sun_material);}
         else
         {
