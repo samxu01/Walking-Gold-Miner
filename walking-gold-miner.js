@@ -152,7 +152,6 @@ export class WalkingGoldMiner extends Scene {
             Math.PI / 4, context.width / context.height, .1, 1000);
 
 
-        const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
 
         //draw character
         //let chrac_tr = Mat4.identity();
