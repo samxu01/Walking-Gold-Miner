@@ -58,7 +58,7 @@ export class WalkingGoldMiner extends Scene {
             stone: new Material(new defs.Phong_Shader(),
                 {ambient: 0, color: hex_color("#a8a3a3")}),
             skyscraper: new Material(new defs.Textured_Phong(1),
-                {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/skyscraper.jpg")}),
+                {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/skyscraper.jpg","NEAREST")}),
             sky: new Material(new defs.Textured_Phong(1),
                 {ambient: 1, diffusivity: 1, specular: 0.5, texture: new Texture("assets/night.jpg")}),
             Wall: new Material(new defs.Textured_Phong(1),
