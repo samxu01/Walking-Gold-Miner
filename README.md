@@ -29,5 +29,20 @@ Method 2:
 1) _**User Interaction (Movement Control):**_ Player will navigate the miner left and right, release the hook, and drop a flashbang using "q", "e", "x", "c"
 2) _**Mirroring:**_ As the glow stick fall into the mine and as the firefly is floating around, the light emitted from the glow stick or the firefly will light up its surroundings, and the light would reflect on the surface of the gold mine
 3) _**Collision Detection:**_ As collision between the gold mine and the hook is detected, the hook reaches a gold mine and can catch the gold mine back
-4) _**Animation:**_ 
+4) _**Animation:**_ As the miner walks left and right, his left and right arms are swinging back and forth alternatively to simulate walking behavior. His legs are also moving. 
 
+## Creaters
+Laiyin Dai | dailaiyin@g.ucla.edu
+-Model and animation for miner
+-Hook transformation
+
+Changjie(Sam) Xu | xcjsam@g.ucla.edu
+-Model for gold/stone/skyscraper/hook
+-Collision detection
+-Upperground background
+
+Peicheng(Mike) Shi | mikespc@g.ucla.edu
+-Contructing Background World
+-Underworld Background
+-Flashbang
+-Fireflies
