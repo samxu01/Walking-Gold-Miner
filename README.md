@@ -6,11 +6,12 @@ Ever since the old gold miner finished his old job, he has been long retired. It
 
 ## Run the Game
 
-1) 
+Method 1: 
    - Download the repository using git clone command. 
    - Run the Code Using Webstorm. 
    - Under index.html, open the web browser as recommended(Chrome).
-2)
+
+Method 2:
    - Download the repository using git clone command. 
    - Run the Code:
      - Window User: Run 'host.bat'. 
